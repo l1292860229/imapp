@@ -3,6 +3,7 @@ package com.coolwin.entity.DB;
 import com.coolwin.entity.appentity.AppUser;
 import com.coolwin.entity.thirdentity.ThirdUser;
 import com.coolwin.entity.thirdentity.ThirdUserDeta;
+import com.coolwin.util.CharacterParser;
 import com.coolwin.util.GsonUtil;
 import com.coolwin.util.StringUtil;
 import com.google.gson.reflect.TypeToken;
@@ -41,10 +42,12 @@ public class DBUser {
     private String picture3;
     private String cover;
     private String remark;
+    private String getmsg;
     public AppUser getAppUser(){
         AppUser appUser = new AppUser();
         appUser.setUid(uid.toString());
         appUser.setPhone(phone);
+        appUser.setSort(sort);
         appUser.setNickname(nickname);
         appUser.setHeadsmall(headsmall);
         appUser.setHeadlarge(headsmall.replace("s_",""));
@@ -80,7 +83,11 @@ public class DBUser {
         appUser.setCover(cover);
         appUser.setUsermenu(GsonUtil.parseJsonWithGsonObject(usermenu,new TypeToken<ArrayList<DBUserMenu>>() {}.getType()));
         appUser.setRemark(remark);
+        if(!StringUtil.isNull(remark)){
+            appUser.setSort(CharacterParser.getSelling(remark));
+        }
         appUser.setUrltitle("商城");
+        appUser.setGetmsg(getmsg);
         return appUser;
     }
     public AppUser getAppUser(ThirdUser thirdUser){
@@ -109,6 +116,14 @@ public class DBUser {
         appUser.setNickname(thirdUserDeta.getUsername());
         appUser.setHeadsmall(thirdUserDeta.getUserface());
         return appUser;
+    }
+
+    public String getGetmsg() {
+        return getmsg;
+    }
+
+    public void setGetmsg(String getmsg) {
+        this.getmsg = getmsg;
     }
 
     public String getRemark() {
