@@ -2,6 +2,7 @@ package com.coolwin.Biz;
 
 import com.coolwin.dao.UserMapper;
 import com.coolwin.entity.DB.DBUser;
+import com.coolwin.entity.appentity.AppResult;
 import com.coolwin.entity.appentity.AppUser;
 import com.coolwin.entity.thirdentity.ThirdUser;
 import com.coolwin.entity.thirdentity.ThirdUserDeta;
@@ -30,6 +31,7 @@ public class UserBiz  extends BaseBiz{
      * 跟据第三方接口数据返回结果值
      */
     public String  getLoginUser(String result,String phone){
+        AppResult appResult = new AppResult();
         //转化成第三方对象
         ThirdUser thirdUser = GsonUtil.parseJsonWithGson(result,ThirdUser.class);
         //判断数据是否正确
@@ -67,6 +69,7 @@ public class UserBiz  extends BaseBiz{
      * @return
      */
     public DBUser registUser(ThirdUser user,String phone){
+        AppResult appResult = new AppResult();
         String ypid= user.getYpid2();
         if (StringUtil.isNull(ypid)) {
             ypid = user.getYpid();
@@ -92,6 +95,7 @@ public class UserBiz  extends BaseBiz{
      * @return
      */
     public String registUser(String result){
+        AppResult appResult = new AppResult();
         //转化成第三方对象
         ThirdUser thirdUser = GsonUtil.parseJsonWithGson(result,ThirdUser.class);
         //判断数据是否正确
@@ -111,6 +115,7 @@ public class UserBiz  extends BaseBiz{
      * @return
      */
     public String getUserDeta(String uid,String uidOrKai6id){
+        AppResult appResult = new AppResult();
         DBUser  dbUser =  userMapper.getUser(uid,uidOrKai6id);
         appResult.setData(dbUser.getAppUser());
         appResult.setStateValue(0,null,null,"/user");
@@ -124,6 +129,7 @@ public class UserBiz  extends BaseBiz{
      * @return
      */
     public String  getThirdUserDeta(String result,String userid,String uid){
+        AppResult appResult = new AppResult();
         //转化成第三方对象
         ThirdUserDeta thirdUserDeta = GsonUtil.parseJsonWithGson(result,ThirdUserDeta.class);
         //判断数据是否正确
@@ -147,6 +153,7 @@ public class UserBiz  extends BaseBiz{
      * @return
      */
     public String getFriendListData(String result,String uid){
+        AppResult appResult = new AppResult();
         Map<String,ThirdUserList> thirdUserListMap = GsonUtil.parseJsonWithGsonObject(result,new TypeToken<Map<String,ThirdUserList>>() {}.getType());
         List<DBUser> dbUsers = userMapper.getUserListByThirdUserList(uid,thirdUserListMap.values());
         List<AppUser> appUsers = new ArrayList<>();
@@ -181,6 +188,7 @@ public class UserBiz  extends BaseBiz{
     public String updateUser( String uid, String sign, String city,String province, String gender,String nickname,
                              String headsmall, String companywebsite,String industry, String company,String companyaddress,
                               String job,String provide,  String demand, String telephone){
+        AppResult appResult = new AppResult();
         userMapper.updateUser(uid,sign,city,province,gender,nickname,headsmall,companywebsite,industry,company,companyaddress,
                 job,provide,demand,telephone);
         DBUser dbUser = userMapper.getUserByYpidAndPhone(uid,uid);

@@ -1,23 +1,28 @@
 package com.coolwin.util;
 
 import com.coolwin.entity.Picture;
+import com.lowagie.text.*;
+import com.lowagie.text.Font;
+import com.lowagie.text.pdf.BaseFont;
+import com.lowagie.text.pdf.PdfWriter;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 import java.util.List;
 
 /**
  * Created by dell on 2017/5/12.
  */
 public class FileUtil {
-    public static final String  ROOTPATH = "picture";
+    public static final String  ROOTPATH = "../picture";
     public static List<String> upload(String root,String outurl,List<MultipartFile> files,String... path){
         String timeFileDirectory =DataUtil.format(new Date());
         String filepath = root+File.separator+ROOTPATH+File.separator;
@@ -34,13 +39,13 @@ public class FileUtil {
             LoggerUtil.getLogger(FileUtil.class).info("name="+name);
             String suffix = name.substring(name.lastIndexOf("."));
             if (!f.isEmpty()) {
-                File file = new File(fpath+System.currentTimeMillis()+suffix);
+                File file = new File(fpath+UUID.randomUUID()+suffix);
                 if (!file.getParentFile().exists()) {
                     file.getParentFile().mkdirs();
                 }
                 try {
                     f.transferTo(file);
-                    upload.add(outurl+File.separator+file.getAbsolutePath().replace(root,""));
+                    upload.add(outurl+"/"+file.getAbsolutePath().replace(root,"").replace("\\","/"));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -67,18 +72,18 @@ public class FileUtil {
             String name = files.get(i).getOriginalFilename();
             String suffix = name.substring(name.lastIndexOf("."));
             if (!files.get(i).isEmpty()) {
-                File file = new File(fpath+System.currentTimeMillis()+suffix);
+                File file = new File(fpath+ UUID.randomUUID()+suffix);
                 if (!file.getParentFile().exists()) {
                     file.getParentFile().mkdirs();
                 }
                 try {
                     files.get(i).transferTo(file);
-                    picture.originUrl = outurl+File.separator+file.getAbsolutePath().replace(root,"");
+                    picture.originUrl = outurl+"/"+file.getAbsolutePath().replace(root,"").replace("\\","/");
                     File outfile = new File(fpath+"s_"+file.getName());
                     Thumbnails.of(file)
                             .size(320, 480)
                             .toFile(outfile);
-                    picture.smallUrl = outurl+File.separator+outfile.getAbsolutePath().replace(root,"");
+                    picture.smallUrl = outurl+"/"+outfile.getAbsolutePath().replace(root,"").replace("\\","/");
                     BufferedImage sourceImg = ImageIO.read(new FileInputStream(outfile));
                     picture.width = sourceImg.getWidth();
                     picture.height = sourceImg.getHeight();
@@ -89,5 +94,48 @@ public class FileUtil {
             }
         }
         return upload;
+    }
+    public static  void txt2pdf(String txtPath, String pdfPath) {
+        File file = new File(pdfPath);
+        if(file.exists()){
+            return;
+        }
+        Document document = new Document(PageSize.A4);
+
+        InputStream is = null;
+        BufferedReader reader = null;
+        try {
+            is = new FileInputStream(txtPath);
+            //读取文本内容
+            reader = new BufferedReader(new InputStreamReader(is));
+            PdfWriter.getInstance(document, new FileOutputStream(pdfPath));
+            /** 新建一个字体,iText的方法
+             * STSongStd-Light 是字体，在iTextAsian.jar 中以property为后缀
+             * UniGB-UCS2-H   是编码，在iTextAsian.jar 中以cmap为后缀
+             * H 代表文字版式是 横版， 相应的 V 代表 竖版
+             */
+            BaseFont bfChinese = BaseFont.createFont("STSongStd-Light",
+                    "UniGB-UCS2-H", false);
+            Font fontChinese = new Font(bfChinese, 30, Font.NORMAL, Color.BLACK);
+//		 打开文档，将要写入内容
+            document.open();
+            String line=reader.readLine();
+            while(line!=null){
+                Paragraph pg = new Paragraph(line,fontChinese);
+                document.add(pg);
+                line=reader.readLine();
+            }
+            document.close();
+            reader.close();
+            is.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

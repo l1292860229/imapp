@@ -24,7 +24,7 @@ public class ShopIndexController {
     }
     @RequestMapping(value="/saveshopindex",method = RequestMethod.POST)
     public String saveshopindex(@RequestParam String ka6id, @RequestParam String token,@RequestParam String ypid,
-                           @RequestParam String uid,@RequestParam String data){
+                           @RequestParam String uid,@RequestParam(required = false) String data){
         return shopIndexBiz.insertOrUpdateShopIndex(ka6id,token,ypid,uid,data);
     }
 }

@@ -132,10 +132,4 @@ public class UserController {
         return userBiz.updateUser(uid,sign,city,province,gender,nickname,headsmall,companywebsite,industry,
                 company,companyaddress,job,provide,demand,telephone);
     }
-    @RequestMapping("/upload")
-    public String upload(HttpServletRequest request){
-        List<MultipartFile> files = ((MultipartHttpServletRequest)request).getFiles("pic");
-//        FileUtil.upload(files,null);
-        return "success";
-    }
 }

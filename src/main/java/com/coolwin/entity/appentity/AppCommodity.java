@@ -1,6 +1,6 @@
 package com.coolwin.entity.appentity;
 
-import com.coolwin.entity.DB.DBCommodity;
+import com.coolwin.entity.DB.DBInformation;
 import com.coolwin.entity.Picture;
 import com.coolwin.util.GsonUtil;
 
@@ -19,13 +19,14 @@ public class AppCommodity {
     private List<Picture> picture;
     private String shopurl;
     private Video video;
+    private String type;
     public class Video{
         public String url;
         public String time;
         public String image;
     }
-    public DBCommodity toDBCommodity(){
-        DBCommodity dbCommodity = new DBCommodity();
+    public DBInformation toDBCommodity(){
+        DBInformation dbCommodity = new DBInformation();
         dbCommodity.setId(id);
         dbCommodity.setUid(uid);
         dbCommodity.setYpid(ypid);
@@ -34,9 +35,19 @@ public class AppCommodity {
         dbCommodity.setPrice(price);
         dbCommodity.setPicture(GsonUtil.objectToJson(picture));
         dbCommodity.setShopurl(shopurl);
+        dbCommodity.setType(type);
         dbCommodity.setVideo(GsonUtil.objectToJson(video));
         return dbCommodity;
     }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public int getId() {
         return id;
     }

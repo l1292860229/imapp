@@ -5,12 +5,13 @@ import com.coolwin.entity.appentity.AppCommodity;
 import com.coolwin.util.GsonUtil;
 import com.google.gson.reflect.TypeToken;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by dell on 2017/6/10.
  */
-public class DBCommodity {
+public class DBInformation {
     private int id;
     private int uid;
     private String ypid;
@@ -20,6 +21,7 @@ public class DBCommodity {
     private String picture;
     private String shopurl;
     private String video;
+    private String type;
 
     public AppCommodity toAppCommodity(){
         AppCommodity appCommodity = new AppCommodity();
@@ -29,11 +31,28 @@ public class DBCommodity {
         appCommodity.setContent(content);
         appCommodity.setTitle(title);
         appCommodity.setPrice(price);
-        appCommodity.setPicture(GsonUtil.parseJsonWithGsonObject(picture,new TypeToken<List<Picture>>()
-        {}.getType()));
+        appCommodity.setType(type);
+        List<Picture> mpic = GsonUtil.parseJsonWithGsonObject(picture,new TypeToken<List<Picture>>()
+        {}.getType());
+        AppCommodity.Video videotemp = GsonUtil.parseJsonWithGson(video,AppCommodity.Video.class);
+        List<Picture> mpictemp = new ArrayList<>();
+        if(mpic!=null && mpic.size()>0){
+            mpictemp.add(mpic.get(0));
+        }else if(videotemp!=null){
+            mpictemp.add(new Picture(videotemp.image));
+        }
+        appCommodity.setPicture(mpictemp);
+        appCommodity.setVideo(videotemp);
         appCommodity.setShopurl(shopurl);
-        appCommodity.setVideo(GsonUtil.parseJsonWithGson(video,AppCommodity.Video.class));
         return appCommodity;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public int getId() {
