@@ -1,4 +1,4 @@
-package com.coolwin.controller;
+package com.coolwin.apicontroller;
 
 import com.coolwin.Biz.FileBiz;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +18,10 @@ public class FileController {
 
     @Autowired
     FileBiz fileBiz;
-
     @RequestMapping("/upload")
     public String upload(HttpServletRequest request){
         return fileBiz.upload(request);
     }
-
     @RequestMapping("/downfile")
     public String downfile(HttpServletRequest request){
         return fileBiz.downFile(request);

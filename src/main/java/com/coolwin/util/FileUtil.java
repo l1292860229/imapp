@@ -84,16 +84,46 @@ public class FileUtil {
                             .size(320, 480)
                             .toFile(outfile);
                     picture.smallUrl = outurl+"/"+outfile.getAbsolutePath().replace(root,"").replace("\\","/");
-                    BufferedImage sourceImg = ImageIO.read(new FileInputStream(outfile));
+                    FileInputStream fileInputStream = new FileInputStream(outfile);
+                    BufferedImage sourceImg = ImageIO.read(fileInputStream);
                     picture.width = sourceImg.getWidth();
                     picture.height = sourceImg.getHeight();
+                    sourceImg.flush();
                     upload.add(picture);
+                    fileInputStream.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
         return upload;
+    }
+    public static void uploadImageNoThumbnails(String root,  List<MultipartFile> files, String... path){
+        String filepath = root+File.separator+ROOTPATH+File.separator;
+        if (path!=null) {
+            for (String s : path) {
+                filepath+=s+File.separator;
+            }
+        }
+        String fpath = filepath+File.separator;
+        for (int i = 0; i < files.size(); i++) {
+            if (files.get(i)==null) {
+                continue;
+            }
+            String name = files.get(i).getOriginalFilename();
+            String suffix = name.substring(name.lastIndexOf("."));
+            if (!files.get(i).isEmpty()) {
+                File file = new File(fpath+ UUID.randomUUID()+suffix);
+                if (!file.getParentFile().exists()) {
+                    file.getParentFile().mkdirs();
+                }
+                try {
+                    files.get(i).transferTo(file);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
     public static  void txt2pdf(String txtPath, String pdfPath) {
         File file = new File(pdfPath);
@@ -137,5 +167,29 @@ public class FileUtil {
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+    public static List<String> traverseFolder(String root,String path,String replaypath) {
+        List<String> list = new ArrayList<>();
+        File file = new File(path);
+        if (file.exists()) {
+            File[] files = file.listFiles();
+            if (files.length == 0) {
+                return list;
+            } else {
+                for (File file2 : files) {
+                    if (file2.isDirectory()) {
+                        if(file2.getName().equals("temp")){
+                            continue;
+                        }
+                        list.addAll(traverseFolder(root,file2.getAbsolutePath(),replaypath)) ;
+                    } else {
+                        list.add(root+file2.getAbsolutePath().replace(replaypath,"").replace("\\","/"));
+                    }
+                }
+            }
+        } else {
+            return list;
+        }
+        return list;
     }
 }

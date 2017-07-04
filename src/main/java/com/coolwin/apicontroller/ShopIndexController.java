@@ -1,4 +1,4 @@
-package com.coolwin.controller;
+package com.coolwin.apicontroller;
 
 import com.coolwin.Biz.ShopIndexBiz;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created by dell on 2017/5/5.
@@ -26,5 +28,9 @@ public class ShopIndexController {
     public String saveshopindex(@RequestParam String ka6id, @RequestParam String token,@RequestParam String ypid,
                            @RequestParam String uid,@RequestParam(required = false) String data){
         return shopIndexBiz.insertOrUpdateShopIndex(ka6id,token,ypid,uid,data);
+    }
+    @RequestMapping("/gettemplatepic")
+    public String gettemplatepic(HttpServletRequest request){
+        return shopIndexBiz.gettemplatepic(request);
     }
 }

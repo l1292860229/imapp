@@ -32,6 +32,17 @@ public class FileBiz extends BaseBiz{
         }
         return "上传图片过多";
     }
+    public String  uploadtemplatepic(HttpServletRequest request){
+        List<MultipartFile> files = ((MultipartHttpServletRequest)request).getFiles("pic");
+        String root =  request.getSession().getServletContext().getRealPath("/");
+        String type = request.getParameter("type");
+        if(type==null || !type.equals("1")){
+            FileUtil.uploadImageNoThumbnails(root,files,"template",""+files.size(),""+System.currentTimeMillis());
+        }else{
+            FileUtil.uploadImageNoThumbnails(root,files,"template","lunbo",""+System.currentTimeMillis());
+        }
+        return "uploadsuccess";
+    }
     public String tohtml(HttpServletRequest request,String fileName){
         String root =  request.getSession().getServletContext().getRealPath("/");
         //获取文件上传路径
@@ -58,7 +69,7 @@ public class FileBiz extends BaseBiz{
     public String downFile(HttpServletRequest request){
         String root =  request.getSession().getServletContext().getRealPath("/");
         String contextpath = request.getScheme() +"://" + request.getServerName()  + ":" +request.getServerPort()+"/file";
-        List<String> filelist =  traverseFolder(contextpath,root+"..\\file");
+        List<String> filelist =  FileUtil.traverseFolder(contextpath,root+"..\\file",root+"..\\file");
         AppResult appResult = new AppResult();
         if (filelist.size()==0) {
             appResult.setStateValue(1,"目录不存在,或文件列表为空",null,"/shopindex");
@@ -68,29 +79,5 @@ public class FileBiz extends BaseBiz{
             appResult.setStateValue(0,null,null,"/shopindex");
             return GsonUtil.objectToJson(appResult);
         }
-    }
-    public List<String> traverseFolder(String root,String path) {
-        List<String> list = new ArrayList<>();
-        File file = new File(path);
-        if (file.exists()) {
-            File[] files = file.listFiles();
-            if (files.length == 0) {
-                return list;
-            } else {
-                for (File file2 : files) {
-                    if (file2.isDirectory()) {
-                        if(file2.getName().equals("temp")){
-                            continue;
-                        }
-                        list.addAll(traverseFolder(root,file2.getAbsolutePath())) ;
-                    } else {
-                        list.add(root+file2.getAbsolutePath().replace(path,"").replace("\\","/"));
-                    }
-                }
-            }
-        } else {
-            return list;
-        }
-        return list;
     }
 }

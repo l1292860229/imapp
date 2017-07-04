@@ -1,9 +1,9 @@
-package com.coolwin.controller;
+package com.coolwin.apicontroller;
 
 import com.coolwin.entity.appentity.AppResult;
 import com.coolwin.util.GsonUtil;
+import com.coolwin.util.HttpRequestor;
 import com.coolwin.util.MD5Util;
-import com.coolwin.util.NetUtil;
 import org.json.JSONObject;
 import org.json.XML;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -57,7 +57,7 @@ public class WeiChatPrepayController {
         SortedMap<String, String> test = new TreeMap<String, String>();
         try {
 //            System.out.println("生成xml:"+sb.toString());
-            String postData = NetUtil.doPost(url, sb.toString());
+            String postData = HttpRequestor.doPost(url, sb.toString());
 //            System.out.println("请求结果"+postData.toString());
             JSONObject json = XML.toJSONObject(postData).getJSONObject("xml");
             test.put("appid", json.getString("appid"));

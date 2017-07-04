@@ -1,4 +1,4 @@
-package com.coolwin.controller;
+package com.coolwin.apicontroller;
 
 import com.coolwin.Biz.InformationBiz;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class InformationController {
     @RequestMapping(value="/delinformation",method = RequestMethod.POST)
     public String delInformation(@RequestParam String id,@RequestParam String ka6id,
                                @RequestParam String token,@RequestParam String ypid,
-                                @RequestParam String uid){
-        return informationBiz.deleteInformation(id);
+                                @RequestParam String uid,@RequestParam String type){
+        return informationBiz.deleteInformation(ypid,id,ka6id,type);
     }
 }
